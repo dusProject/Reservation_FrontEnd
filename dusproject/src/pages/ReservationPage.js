@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import TopBar from "../components/TopBar";
+import ReserveModal from "../modals/ReservModal";
 
 const ReservationContainer = styled.div`
   display: flex;
@@ -44,6 +46,7 @@ const SeatLayoutContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-left: 50px;
 `
 const SeatFront = styled.div`
   width: 430px;
@@ -127,32 +130,65 @@ const ReservationPage = () => {
     const seatRows = [];
     for (let i = 0; i < seats.length; i += 6) {
         seatRows.push(seats.slice(i, i + 6));
+    };
+
+    const [selectedSeat, setSelectedSeat] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleSeatClick = (seat) => {
+      if (!seat.reserved) {
+        setSelectedSeat(seat.id);
+        setIsModalOpen(true);
+      }
+    };
+
+    const handleConfirm = () => {
+      alert(`${selectedSeat}번 좌석이 예약되었습니다.`);
+      setIsModalOpen(false);
+      //예약처리 로직 추가
+    };
+
+    const handleCancel = () => {
+      setIsModalOpen(false); //모달 닫기
     }
     return (
         <ReservationContainer>
+          <TopBar />
             <SeatLayoutContainer>
                 <SeatFront>front</SeatFront>
                 {seatRows.map((row, index) => (
                     <SeatSection key={index}>
                     <SeatRow>
                     {row.slice(0, 2).map(seat => (
-                        <Seat key={seat.id} reserved={seat.reserved}>
+                        <Seat 
+                          key={seat.id} 
+                          reserved={seat.reserved}
+                          onClick={() => handleSeatClick(seat)}
+                        >
                         {seat.reserved ? seat.name : ""}
                         </Seat>
                     ))}
                     </SeatRow>
                     <SeatRow>
                     {row.slice(2, 4).map(seat => (
-                        <Seat key={seat.id} reserved={seat.reserved}>
+                        <Seat 
+                          key={seat.id} 
+                          reserved={seat.reserved}
+                          onClick={() => handleSeatClick(seat)}
+                        >
                         {seat.reserved ? seat.name : ""}
-                        </Seat>
+                      </Seat>
                     ))}
                     </SeatRow>
                     <SeatRow>
                     {row.slice(4, 6).map(seat => (
-                        <Seat key={seat.id} reserved={seat.reserved}>
+                        <Seat 
+                          key={seat.id} 
+                          reserved={seat.reserved}
+                          onClick={() => handleSeatClick(seat)}
+                        >
                         {seat.reserved ? seat.name : ""}
-                        </Seat>
+                      </Seat>
                     ))}
                     </SeatRow>
                 </SeatSection>
@@ -164,6 +200,13 @@ const ReservationPage = () => {
                 <InformText>예약 불가</InformText>
                 <InformColor2 />
             </InformColorContainer>
+            {/* 모달 컴포넌트 */}
+            <ReserveModal 
+              isOpen={isModalOpen}
+              seatId={selectedSeat}
+              onConfirm={handleConfirm}
+              onCancel={handleCancel}
+            />
         </ReservationContainer>
     );
 };

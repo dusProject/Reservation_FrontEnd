@@ -8,7 +8,7 @@ const TopBarContainer = styled.div`
   left: 0;
   top: 0;
   height: 40px;
-  padding: 10px 1372px 10px 23px;
+  padding: 12px 1372px 8px 23px;
   background-color: #00b8a8;
   display: felx;
   align-items: center;

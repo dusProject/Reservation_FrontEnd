@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import GoogleLogin from "../components/GoogleLogin";
 import ReservedSeats from "../components/ReservedSeats";
+import TopBar from "../components/TopBar";
 
 const HomePageContainer = styled.div`
   display: flex;
@@ -12,7 +13,7 @@ const HomePageContainer = styled.div`
   justify-content: space-between;
   width: 80%;
   margin-top: 9rem;
-  margin-left: 10%;
+  margin-left: 7%;
   margin-right: 10%;
   white-space: nowrap;
 `
@@ -20,6 +21,7 @@ const HomePageContainer = styled.div`
 const HomePage = () => {
     return (
         <HomePageContainer>
+            <TopBar />
             <GoogleLogin />
             <ReservedSeats />
         </HomePageContainer>
