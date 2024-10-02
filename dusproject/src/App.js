@@ -4,6 +4,7 @@ import HomePage from "./pages/HomePage";
 import MyReservationPage from "./pages/MyReservaionPage";
 import ReservationPage from "./pages/ReservationPage";
 import ErrorPage from "./pages/ErrorPage";
+import SearchProfessor from "./SearchProfessor";
 
 function App() {
   return (
