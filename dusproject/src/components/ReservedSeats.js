@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import LoginModal from "../modals/LoginModal";
+import axios from "axios";
 
 const SeatLayoutContainer = styled.div`
   display: flex;
@@ -69,46 +72,135 @@ const ReserveButton = styled.button`
 
 const ReservedSeats = () => {
     const navigate = useNavigate();
-    const seats = [
-        { id: 'A1', reserved: false, name: "" },
-        { id: 'A2', reserved: false, name: "" },
-        { id: 'A3', reserved: false, name: "" },
-        { id: 'A4', reserved: true, name: "연개소문" },
-        { id: 'A5', reserved: false, name: "" },
-        { id: 'A6', reserved: true, name: "예약됨" },
-        { id: 'B1', reserved: false, name: "" },
-        { id: 'B2', reserved: false, name: "" },
-        { id: 'B3', reserved: false, name: "" },
-        { id: 'B4', reserved: false, name: "" },
-        { id: 'B5', reserved: false, name: "" },
-        { id: 'B6', reserved: false, name: "" },
-        { id: 'C1', reserved: false, name: "" },
-        { id: 'C2', reserved: false, name: "" },
-        { id: 'C3', reserved: true, name: "데이" },
-        { id: 'C4', reserved: false, name: "" },
-        { id: 'C5', reserved: false, name: "" },
-        { id: 'C6', reserved: false, name: "" },
-        { id: 'D1', reserved: false, name: "" },
-        { id: 'D2', reserved: false, name: "" },
-        { id: 'D3', reserved: false, name: "" },
-        { id: 'D4', reserved: false, name: "" },
-        { id: 'D5', reserved: false, name: "" },
-        { id: 'D6', reserved: false, name: "" },
-        { id: 'E1', reserved: false, name: "" },
-        { id: 'E2', reserved: false, name: "" },
-        { id: 'E3', reserved: false, name: "" },
-        { id: 'E4', reserved: false, name: "" },
-        { id: 'E5', reserved: false, name: "" },
-        { id: 'E6', reserved: false, name: "" }
-    ];
+    const isLoggedIn = useSelector((state) => state.auth.isLoggedIn);
+    const [isModalOpen, setIsModalOpen ] = useState(false);
+    // const seats = [
+    //     { id: 'A1', reserved: false, name: "" },
+    //     { id: 'A2', reserved: false, name: "" },
+    //     { id: 'A3', reserved: false, name: "" },
+    //     { id: 'A4', reserved: false, name: "" },
+    //     { id: 'A5', reserved: false, name: "" },
+    //     { id: 'A6', reserved: false, name: "" },
+    //     { id: 'B1', reserved: false, name: "" },
+    //     { id: 'B2', reserved: false, name: "" },
+    //     { id: 'B3', reserved: false, name: "" },
+    //     { id: 'B4', reserved: false, name: "" },
+    //     { id: 'B5', reserved: false, name: "" },
+    //     { id: 'B6', reserved: false, name: "" },
+    //     { id: 'C1', reserved: false, name: "" },
+    //     { id: 'C2', reserved: false, name: "" },
+    //     { id: 'C3', reserved: false, name: "" },
+    //     { id: 'C4', reserved: false, name: "" },
+    //     { id: 'C5', reserved: false, name: "" },
+    //     { id: 'C6', reserved: false, name: "" },
+    //     { id: 'D1', reserved: false, name: "" },
+    //     { id: 'D2', reserved: false, name: "" },
+    //     { id: 'D3', reserved: false, name: "" },
+    //     { id: 'D4', reserved: false, name: "" },
+    //     { id: 'D5', reserved: false, name: "" },
+    //     { id: 'D6', reserved: false, name: "" },
+    //     { id: 'E1', reserved: false, name: "" },
+    //     { id: 'E2', reserved: false, name: "" },
+    //     { id: 'E3', reserved: false, name: "" },
+    //     { id: 'E4', reserved: false, name: "" },
+    //     { id: 'E5', reserved: false, name: "" },
+    //     { id: 'E6', reserved: false, name: "" }
+    // ];
+    const [seats, setSeats] = useState([]);
+
+    useEffect(() => {
+      const fetchSeats = async () =>{
+        try {
+          const response = await axios.get('http://localhost:8080/ureca', {
+            headers: {
+              Authorization: `Bearer ${'abc'}`, 
+            },
+          });
+          const seatData = response.data.map(seat => ({
+            id: seat.seatNo,
+            reserved: seat.status,
+            name: seat.userName,
+          }));
+          setSeats(seatData);
+        } catch(error) {
+          console.error("Failed to fetch seat data", error.response, error);
+          setSeats([
+            { id: 'A1', reserved: false, name: "" },
+            { id: 'A2', reserved: false, name: "" },
+            { id: 'A3', reserved: false, name: "" },
+            { id: 'A4', reserved: false, name: "" },
+            { id: 'A5', reserved: false, name: "" },
+            { id: 'A6', reserved: false, name: "" },
+            { id: 'B1', reserved: false, name: "" },
+            { id: 'B2', reserved: false, name: "" },
+            { id: 'B3', reserved: false, name: "" },
+            { id: 'B4', reserved: false, name: "" },
+            { id: 'B5', reserved: false, name: "" },
+            { id: 'B6', reserved: false, name: "" },
+            { id: 'C1', reserved: false, name: "" },
+            { id: 'C2', reserved: false, name: "" },
+            { id: 'C3', reserved: false, name: "" },
+            { id: 'C4', reserved: false, name: "" },
+            { id: 'C5', reserved: false, name: "" },
+            { id: 'C6', reserved: false, name: "" },
+            { id: 'D1', reserved: false, name: "" },
+            { id: 'D2', reserved: false, name: "" },
+            { id: 'D3', reserved: false, name: "" },
+            { id: 'D4', reserved: false, name: "" },
+            { id: 'D5', reserved: false, name: "" },
+            { id: 'D6', reserved: false, name: "" },
+            { id: 'E1', reserved: false, name: "" },
+            { id: 'E2', reserved: false, name: "" },
+            { id: 'E3', reserved: false, name: "" },
+            { id: 'E4', reserved: false, name: "" },
+            { id: 'E5', reserved: false, name: "" },
+            { id: 'E6', reserved: false, name: "" }
+        ]);
+        }
+      };
+      fetchSeats();
+
+      // SSE 구독을 추가
+      const eventSource = new EventSource('http://localhost:8080/home/sse'); // 서버의 SSE 엔드포인트
+      
+      eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        setSeats(prevSeats => {
+          return prevSeats.map(seat => 
+            seat.id === data.seatNo
+            ? {...seat, reserved: data.status, name: data.userName }
+            : seat
+          );
+        });
+      }; 
+    eventSource.onerror = (error) => {
+      console.error("SSE connection error:", error);
+      eventSource.close();
+    };
+
+    // 컴포넌트 언마운트 시 SSE 연결 닫기
+    return () => {
+      eventSource.close();
+    };
+    }, []);
 
     const seatRows = [];
+
     for (let i = 0; i < seats.length; i += 6) {
         seatRows.push(seats.slice(i, i + 6));
     }
     const handleButtonClick = () => {
-        navigate("/reservation")
+       if( isLoggedIn ) {
+        navigate("/reservation");
+       }
+       else {
+        setIsModalOpen(true);
+       }
     }
+    const handleCloseModal = () => {
+      setIsModalOpen(false);
+    };
+
     return (
         <SeatLayoutContainer>
             <SeatFront>front</SeatFront>
@@ -138,6 +230,7 @@ const ReservedSeats = () => {
               </SeatSection>
             ))}
             <ReserveButton onClick={handleButtonClick}>좌석 예약하기</ReserveButton>
+            <LoginModal isOpen={isModalOpen} onClose={handleCloseModal} />
         </SeatLayoutContainer>
     );
 };

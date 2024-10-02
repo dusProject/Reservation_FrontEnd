@@ -29,8 +29,8 @@ position: relative;
 const ModalTitle = styled.p`
   font-size: 36px;
   color: #000;
-  margin-bottom: 38px;
-  margin-top: 30px;
+  margin-bottom: 80px;
+  margin-top: 20px;
 `;
 
 const ConfirmButton = styled.button`
@@ -44,18 +44,17 @@ const ConfirmButton = styled.button`
   text-align: centerl
   cursor: pointer;
   position: absolute; /* 버튼을 부모 내에서 절대 위치 설정 */
-  bottom: 21px; /* 아래로 31px 이동 */
-  right: 21px; /* 오른쪽으로 31px 이동 */
+  bottom: 31px; /* 아래로 31px 이동 */
+  right: 31px; /* 오른쪽으로 31px 이동 */
 `;
 
-const LoginModal = ({ isOpen, onConfirm }) => {
+const LoginModal = ({ isOpen, onClose }) => {
     if (!isOpen) return null;
-
     return (
         <ModalOverlay>
             <ModalContainer>
                 <ModalTitle>로그인 후 예약 가능합니다.</ModalTitle>
-                <ConfirmButton onClick={onConfirm}>확인</ConfirmButton>
+                <ConfirmButton onClick={onClose}>확인</ConfirmButton>
             </ModalContainer>
         </ModalOverlay>
     )

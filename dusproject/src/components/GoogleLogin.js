@@ -2,6 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import {login, logout} from "../redux/authSlice"; // Redux 액션 불러오기
 
 const GoogleLoginContainer = styled.div`
     min-width: 342px;
@@ -85,15 +87,21 @@ const LoginText = styled.span`
 `;
 const GoogleLogin = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const isLoggedIn = useSelector((state) => state.auth.isLoggedIn); // redux 상태 사용
 
     const [profilePic, setProfilePic] = useState("/userbaseimg.png");
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [nickname, setNickname] = useState("Denenne");
     
     const handleLogin = () => {
-        setIsLoggedIn(!isLoggedIn); // 로그인 상태를 반전시킴
-        setProfilePic("/catprofile.png");
-        alert("로그인이 완료되었습니다.")
+        if(isLoggedIn) {
+            dispatch(logout());
+        } // 로그인 상태를 반전시킴
+        else {
+            dispatch(login());
+            setProfilePic("/catprofile.png");
+            alert("로그인이 완료되었습니다.")
+        }
     };
 
     const handleMyReservClick = () => {

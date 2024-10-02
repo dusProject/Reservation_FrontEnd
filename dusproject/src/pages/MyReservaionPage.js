@@ -5,6 +5,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import TopBar from "../components/TopBar";
 import CancelModal from "../modals/CancelModal";
+import { useSelector, useDispatch } from "react-redux";
+import { cancelSeat } from "../redux/authSlice";
 
 const MyReservationContainer = styled.div`
   display: flex;
@@ -62,24 +64,69 @@ const CancleButton = styled.button`
   font-size: 28px;
   text-align: center;
   cursor: pointer;
-   position: absolute; /* 버튼을 부모 내에서 절대 위치 설정 */
+  position: absolute; /* 버튼을 부모 내에서 절대 위치 설정 */
   bottom: 31px; /* 아래로 31px 이동 */
   right: 31px; /* 오른쪽으로 31px 이동 */
 `
 
 
 const MyReservationPage = () => {
-    const [seatNumber, setSeatNumber] = useState("A2");
+    const dispatch = useDispatch();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [seatNumber, setSeatNumber] = useState(null);
+    const userId = useSelector((state) => state.auth.userId);
+
+    useEffect(() => {
+      const fetchMyReservation = async () => {
+        try {
+          const response = await axios.get('http://localhost:8080/ureca/myReservation', {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            params: {
+              userId: userId,
+            }
+          });
+          
+          if (response.data && response.data.seatNo !== null) {
+            setSeatNumber(response.data.seatNo);
+          } else {
+            setSeatNumber("None");
+          }
+        } catch (error) {
+          console.error("Failed to fetch reservation data", error);
+        }
+      };
+      fetchMyReservation(); 
+    }, [userId]);
 
     const handleCancel = () => {
       setIsModalOpen(true); //모달열기
     };
 
-    const handleConfirm = () => {
-      setIsModalOpen(false);
-      alert("예약이 취소되었습니다.");
       //취소로직 실행
+    const handleConfirm = async () => {
+      try {
+        const response = await axios.delete('http://localhost:8080/ureca/myReservation/delete', {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          data: {
+            seatNo: seatNumber,
+            userId: userId,
+          }
+        });
+        if (response.status === 200){
+          dispatch(cancelSeat())
+          alert("예약이 취소되었습니다.");
+          setSeatNumber("None");
+        }
+      } catch (error) {
+        console.error("Failed to cancel reservation", error);
+        alert("에약 취소에 실패했습니다.");
+      }
+
+      setIsModalOpen(false);
     };
 
     const handleCloseModal = () => {
